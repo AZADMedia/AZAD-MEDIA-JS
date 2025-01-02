@@ -56,15 +56,6 @@ async function fetchItems() {
     console.log("All items fetched:", allItems.length);
 }
 
-// Debounce function to limit search calls
-function debounce(func, delay) {
-    let timeout;
-    return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), delay);
-    };
-}
-
 // Render search results
 function renderResults(query) {
     const filteredItems = allItems.filter(item =>
@@ -96,15 +87,17 @@ function loadCSS(cssFile) {
 }
 
 // Event listener for search input
-searchInput.addEventListener("input", debounce(() => {
-    const query = searchInput.value.trim();
-    if (query) {
-        renderResults(query);
-    } else {
-        resultsContainer.innerHTML = "";
-        contentBox.style.display = "flex";
+searchInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") { // Trigger search on Enter key press
+        const query = searchInput.value.trim();
+        if (query) {
+            renderResults(query); // Render results
+        } else {
+            resultsContainer.innerHTML = ""; // Clear results if query is empty
+            contentBox.style.display = "flex"; // Show main content box
+        }
     }
-}, 300)); // 300ms debounce delay
+});
 
 // Initial fetching of items
 fetchItems().then(() => {
